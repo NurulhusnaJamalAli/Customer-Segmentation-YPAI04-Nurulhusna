@@ -119,6 +119,7 @@ history = model.fit(X_train, y_train_encoded, epochs=20, batch_size=32, validati
 
 # %%
 # Evaluate the model on the test set
+from sklearn.metrics import f1_score
 test_loss, test_accuracy = model.evaluate(X_test, label_encoder.transform(y_test)) 
 print(f'Test Accuracy: {test_accuracy:.4f}')
 
