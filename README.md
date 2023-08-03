@@ -6,7 +6,7 @@ This project is focused on customer segmentation using a dataset from Kaggle. Th
 
 ## Dataset Source
 The data used in this project can be found on Kaggle at the following link:
-[Kaggle - Customer Segmentation Dataset](https://www.kaggle.com/datasets/abisheksudarshan/customersegmentation)
+[[Kaggle - Customer Segmentation Dataset](https://www.kaggle.com/datasets/abisheksudarshan/customer-segmentation)]
 
 
 ## Requirements
@@ -29,7 +29,7 @@ The project is structured as follows:
 
 ## Acknowledgments
 The datasets used in this project are sourced from Kaggle. Credit goes to the original author:
-[Author's Name on Kaggle](https://www.kaggle.com/datasets/abisheksudarshan/customersegmentation)
+[Author's Name on Kaggle](https://www.kaggle.com/datasets/abisheksudarshan/customer-segmentation)]
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
