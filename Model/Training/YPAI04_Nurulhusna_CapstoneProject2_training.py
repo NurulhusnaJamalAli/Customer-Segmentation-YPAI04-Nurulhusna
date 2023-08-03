@@ -122,12 +122,108 @@ history = model.fit(X_train, y_train_encoded, epochs=20, batch_size=32, validati
 test_loss, test_accuracy = model.evaluate(X_test, label_encoder.transform(y_test)) 
 print(f'Test Accuracy: {test_accuracy:.4f}')
 
-# Calculate F1 score (you may need to import it from sklearn)
-from sklearn.metrics import f1_score
+# Calculate F1 score 
+
 y_pred = model.predict(X_test)
 y_pred_labels = np.argmax(y_pred, axis=1)
 f1 = f1_score(label_encoder.transform(y_test), y_pred_labels, average='weighted')
 print(f'F1 Score: {f1:.4f}')
+
+#%%
+# Train and evaluate a simple Machine Learning model 
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# Feature Scaling
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Train and evaluate a simple Machine Learning model (Logistic Regression)
+ml_model = LogisticRegression(max_iter=1000)
+ml_model.fit(X_train_scaled, y_train)
+y_pred_ml = ml_model.predict(X_test_scaled)
+accuracy_ml = accuracy_score(y_test, y_pred_ml)
+f1_ml = f1_score(y_test, y_pred_ml, average='weighted')
+
+print(f'Accuracy (Machine Learning): {accuracy_ml:.4f}')
+print(f'F1 Score (Machine Learning): {f1_ml:.4f}')
+
+#%%
+from sklearn.model_selection import GridSearchCV
+
+# Hyperparameter Tuning for Random Forest
+param_grid = {
+    'n_estimators': [50, 100, 150],
+    'max_depth': [None, 10, 20],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+
+rf_model = RandomForestClassifier(random_state=42)
+grid_search = GridSearchCV(estimator=rf_model, param_grid=param_grid, cv=5, n_jobs=-1)
+grid_search.fit(X_train_scaled, y_train)
+best_rf_model = grid_search.best_estimator_
+y_pred_rf = best_rf_model.predict(X_test_scaled)
+accuracy_rf = accuracy_score(y_test, y_pred_rf)
+f1_rf = f1_score(y_test, y_pred_rf, average='weighted')
+
+print(f'Accuracy (Random Forest): {accuracy_rf:.4f}')
+print(f'F1 Score (Random Forest): {f1_rf:.4f}')
+
+#%%
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint
+
+# Define the hyperparameter distributions
+param_distributions = {
+    'n_estimators': randint(50, 150),  # Randomly choose between 50 to 150
+    'max_depth': [None, 10, 20],  # Choose from these specific values
+    'min_samples_split': randint(2, 10),  # Randomly choose between 2 to 10
+    'min_samples_leaf': randint(1, 4)  # Randomly choose between 1 to 4
+}
+
+rf_model = RandomForestClassifier(random_state=42)
+
+# Create RandomizedSearchCV object
+random_search = RandomizedSearchCV(
+    estimator=rf_model,
+    param_distributions=param_distributions,
+    n_iter=10,  
+    cv=5,
+    n_jobs=-1
+)
+
+# Perform RandomizedSearchCV
+random_search.fit(X_train_scaled, y_train)
+
+# Get the best model and its hyperparameters
+best_rf_model = random_search.best_estimator_
+y_pred_rf = best_rf_model.predict(X_test_scaled)
+accuracy_rf = accuracy_score(y_test, y_pred_rf)
+f1_rf = f1_score(y_test, y_pred_rf, average='weighted')
+
+print(f'Best Hyperparameters: {random_search.best_params_}')
+print(f'Accuracy (Random Forest): {accuracy_rf:.4f}')
+print(f'F1 Score (Random Forest): {f1_rf:.4f}')
+
+
+#%%
+# Model Comparison and Conclusion
+if accuracy_ml > 0.60:
+    print("The Logistic Regression model achieves an accuracy greater than 60%.")
+    if accuracy_rf > 0.65:
+        print("The Random Forest model achieves an accuracy greater than 65%.")
+        print("Considering the performance, it appears that the Random Forest model performs better on this dataset.")
+    else:
+        print("The Random Forest model achieves an accuracy less than 65%.")
+        print("Considering the performance, it appears that the Logistic Regression model is a competitive choice for this dataset.")
+else:
+    print("The Logistic Regression model achieves an accuracy less than 60%.")
+    print("Further analysis and optimization are required to improve the model's performance.")
+
 
 #%% 
 import joblib
@@ -139,3 +235,19 @@ model.save('trained_model.h5')
 joblib.dump(label_encoder, 'label_encoder.pkl')
 
 # %%
+# Save the model architecture plot as 'model_architecture_new.png'
+from tensorflow.keras.utils import plot_model
+
+plot_model(model, to_file='model_architecture.png', show_shapes=True)
+
+# Plot the model architecture using matplotlib
+import matplotlib.pyplot as plt
+import os
+
+image_path = 'model_architecture.png'
+if os.path.exists(image_path):
+    plt.imshow(plt.imread(image_path))
+    plt.axis('off')
+    plt.show()
+else:
+    print(f"Error: File '{image_path}' not found.")
